@@ -1,12 +1,13 @@
-"use client";
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App'
+import { ErrorBoundary } from './Componentes/ErrorBoundary'
+import './Aplicativo/globals.css'
 
-import App from "../App";
-import { ErrorBoundary } from "../components/ErrorBoundary";
-
-export default function Home() {
-  return (
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
     <ErrorBoundary>
       <App />
     </ErrorBoundary>
-  );
-}
+  </React.StrictMode>
+)
