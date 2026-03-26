@@ -54,7 +54,7 @@ export const ContactsList: React.FC<ContactsListProps> = ({
             <Users size={32} />
           </div>
           <div>
-            <h2 className="text-3xl font-display font-black text-white tracking-tight leading-tight">Base de <span className="text-gradient-gold">Leads Elite</span></h2>
+            <h2 className="text-3xl font-display font-black text-white tracking-tight leading-tight">Base de <span className="text-gradient-gold">Leads Radar</span></h2>
             <p className="text-base text-white/30 mt-1.5 font-medium">Gerencie todos os seus leads estratégicos em um só lugar.</p>
           </div>
         </div>
@@ -62,7 +62,7 @@ export const ContactsList: React.FC<ContactsListProps> = ({
           onClick={() => setIsModalOpen(true)}
           className="w-full lg:w-auto px-8 py-4 bg-gradient-to-br from-gold-light via-gold to-gold-dark text-navy font-black text-xs uppercase tracking-[0.4em] rounded-[24px] hover:shadow-[0_15px_30px_rgba(212,175,55,0.4)] hover:scale-[1.05] active:scale-[0.95] transition-all duration-700 flex items-center justify-center gap-4 shadow-2xl"
         >
-          <Plus size={20} strokeWidth={4} /> Novo Lead de Elite
+          <Plus size={20} strokeWidth={4} /> Novo Lead Radar
         </button>
       </div>
 

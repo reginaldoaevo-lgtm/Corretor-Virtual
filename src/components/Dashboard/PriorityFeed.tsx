@@ -37,7 +37,7 @@ export const PriorityFeed: React.FC<PriorityFeedProps> = ({
           <Zap size={32} className="animate-pulse" />
         </div>
         <div>
-          <h2 className="text-2xl font-display font-black text-white tracking-tight leading-tight">Feed de <span className="text-gradient-gold">Prioridade Elite</span></h2>
+          <h2 className="text-2xl font-display font-black text-white tracking-tight leading-tight">Feed de <span className="text-gradient-gold">Prioridade Radar</span></h2>
           <p className="text-sm text-white/30 mt-1 font-medium">Leads que precisam da sua atenção imediata baseados em comportamento e potencial.</p>
         </div>
       </div>

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { AIResponse } from '../types';
-import { generateEliteResponse, analyzeAllContacts, GlobalAnalysisItem } from '../services/geminiService';
+import { generateRadarResponse, analyzeAllContacts, GlobalAnalysisItem } from '../services/geminiService';
 
 export const useAI = () => {
   const [conversation, setConversation] = useState('');
@@ -19,7 +19,7 @@ export const useAI = () => {
     
     setIsLoading(true);
     try {
-      const response = await generateEliteResponse(conversation, contactName, property, analysisImage || undefined);
+      const response = await generateRadarResponse(conversation, contactName, property, analysisImage || undefined);
       setAiResponse(response);
       return response;
     } catch (error: any) {

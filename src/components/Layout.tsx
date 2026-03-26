@@ -48,7 +48,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, setIsModalOpen }) => {
             >
               <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-500" />
               <Plus size={16} strokeWidth={4} className="group-hover:rotate-90 transition-transform duration-700" /> 
-              <span className="hidden sm:inline">Novo Lead Elite</span>
+              <span className="hidden sm:inline">Novo Lead Radar</span>
               <span className="sm:hidden">Novo</span>
             </button>
           </div>

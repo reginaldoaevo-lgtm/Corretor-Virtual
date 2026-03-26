@@ -36,7 +36,7 @@ export const SwitchUserModal: React.FC<SwitchUserModalProps> = ({
     {
       id: 'admin-default',
       name: 'Reginaldo Magalhaes',
-      email: 'reginaldo@elite.com',
+      email: 'reginaldo@radar.com',
       role: 'admin' as const,
       status: 'Ativo' as const,
       password: 'admin'
@@ -82,7 +82,7 @@ export const SwitchUserModal: React.FC<SwitchUserModalProps> = ({
             <div className="space-y-8 max-h-[600px] overflow-y-auto pr-4 custom-scrollbar">
               <p className="text-[11px] font-black text-white/20 uppercase tracking-[0.5em] mb-10 ml-2 flex items-center gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-gold/40" />
-                Selecione o perfil de elite:
+                Selecione o perfil radar:
               </p>
               {allUsers.map((user) => (
                 <button
@@ -107,7 +107,7 @@ export const SwitchUserModal: React.FC<SwitchUserModalProps> = ({
                     <p className="text-[11px] font-black text-white/30 uppercase tracking-[0.4em] mt-2 flex items-center gap-2">
                       <span className="w-1 h-1 rounded-full bg-gold/40" />
                       {user.role === 'admin' ? 'Gestor Master' : 
-                       user.role === 'elite' ? 'Corretor Elite' : 
+                       user.role === 'elite' ? 'Corretor Radar' : 
                        'Corretor Premium'}
                     </p>
                   </div>
@@ -138,7 +138,7 @@ export const SwitchUserModal: React.FC<SwitchUserModalProps> = ({
                 </div>
                 <div>
                   <h4 className="text-4xl font-display font-black text-white tracking-tighter leading-tight">{selectedUserToSwitch.name}</h4>
-                  <p className="text-lg text-white/30 mt-3 font-medium">Autenticação de Elite Requerida</p>
+                  <p className="text-lg text-white/30 mt-3 font-medium">Autenticação Radar Requerida</p>
                 </div>
               </div>
 
@@ -160,7 +160,7 @@ export const SwitchUserModal: React.FC<SwitchUserModalProps> = ({
                   className="w-full py-8 bg-gradient-to-br from-gold-light via-gold to-gold-dark text-navy font-black text-sm uppercase tracking-[0.5em] rounded-[32px] hover:bg-white transition-all duration-700 shadow-[0_30px_60px_rgba(212,175,55,0.4)] hover:scale-[1.03] active:scale-[0.97] border border-white/20 relative overflow-hidden group"
                 >
                   <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-500" />
-                  Confirmar Login Elite
+                  Confirmar Login Radar
                 </button>
               </div>
             </div>

@@ -21,7 +21,7 @@ const validateKey = (key: string) => {
 // Helper to get the AI client with the latest API key
 function getAIClient() {
   // 1. Check manual key first (user intent is strongest here)
-  const localKey = safeLocalStorage.getItem('ELITE_CRM_GEMINI_KEY') || '';
+  const localKey = safeLocalStorage.getItem('RADAR_CRM_GEMINI_KEY') || '';
   if (localKey && validateKey(localKey)) {
     const apiKey = localKey.trim();
     return { ai: new GoogleGenAI({ apiKey }), apiKey };
@@ -48,7 +48,7 @@ function getAIClient() {
   return { ai: new GoogleGenAI({ apiKey }), apiKey };
 }
 
-export async function generateEliteResponse(conversation: string, contactName: string, property: string, imageBase64?: string) {
+export async function generateRadarResponse(conversation: string, contactName: string, property: string, imageBase64?: string) {
   const { ai } = getAIClient();
 
   console.log(`🤖 Iniciando análise comportamental para: ${contactName}`);
@@ -56,7 +56,7 @@ export async function generateEliteResponse(conversation: string, contactName: s
   try {
     const parts: any[] = [
       {
-        text: `Você é um Especialista em Análise e Comportamento do Cliente de Elite. 
+        text: `Você é um Especialista em Análise e Comportamento do Cliente Radar. 
         Sua missão é analisar profundamente a interação com o cliente ${contactName} e fornecer a melhor resposta e estratégia de conversão.
         
         Dados fornecidos:
@@ -132,7 +132,7 @@ export async function analyzeAllContacts(contacts: any[]): Promise<GlobalAnalysi
   try {
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
-      contents: `Você é o Especialista em Comportamento do Consumidor da Elite CRM. 
+      contents: `Você é o Especialista em Comportamento do Consumidor da Radar CRM. 
       Analise o status atual destes leads e forneça uma análise estratégica individual focada em gatilhos mentais e comportamento.
       
       Contatos:

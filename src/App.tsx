@@ -48,7 +48,7 @@ const validateKey = (key: string) => {
 const getApiKey = () => {
   if (typeof window === 'undefined') return '';
   
-  const localKey = safeLocalStorage.getItem('ELITE_CRM_GEMINI_KEY') || '';
+  const localKey = safeLocalStorage.getItem('RADAR_CRM_GEMINI_KEY') || '';
 
   // 1. Check manual key first (user intent is strongest here)
   if (localKey && validateKey(localKey)) return localKey.trim();
@@ -93,7 +93,7 @@ export default function App() {
       setGeminiStatus('checking');
       testGeminiConnection().then(success => {
         if (success) {
-          console.log("✅ Cérebro de Vendas Elite conectado!");
+          console.log("✅ Cérebro de Vendas Radar conectado!");
           setGeminiStatus('connected');
           sessionStorage.setItem('gemini_connection_status', 'connected');
         } else {
@@ -107,14 +107,14 @@ export default function App() {
 
   const handleSaveManualKey = () => {
     if (manualKey.trim()) {
-      safeLocalStorage.setItem('ELITE_CRM_GEMINI_KEY', manualKey.trim());
+      safeLocalStorage.setItem('RADAR_CRM_GEMINI_KEY', manualKey.trim());
       console.log("🔑 Chave manual salva no LocalStorage.");
       window.location.reload();
     }
   };
 
   const handleClearKey = () => {
-    safeLocalStorage.removeItem('ELITE_CRM_GEMINI_KEY');
+    safeLocalStorage.removeItem('RADAR_CRM_GEMINI_KEY');
     console.log("🗑️ Chave manual removida.");
     window.location.reload();
   };
@@ -214,7 +214,7 @@ export default function App() {
           </div>
           <h2 className="text-2xl font-display font-black mb-4 tracking-tighter">Configuração Necessária</h2>
           <p className="text-white/60 text-sm leading-relaxed mb-8">
-            Para ativar o <strong>Cérebro de Vendas Elite</strong> e sincronizar dados entre dispositivos, você precisa configurar as chaves de API nos Segredos do projeto.
+            Para ativar o <strong>Cérebro de Vendas Radar</strong> e sincronizar dados entre dispositivos, você precisa configurar as chaves de API nos Segredos do projeto.
           </p>
           
           <div className="space-y-4 text-left mb-8">
@@ -248,7 +248,7 @@ export default function App() {
           <div className="mb-8 p-6 bg-white/[0.03] border border-white/10 rounded-[24px] text-left">
             <div className="flex items-center justify-between mb-4">
               <p className="text-[10px] font-black text-gold uppercase tracking-[0.2em]">Solução Alternativa (Manual)</p>
-              {isMounted && safeLocalStorage.getItem('ELITE_CRM_GEMINI_KEY') && (
+              {isMounted && safeLocalStorage.getItem('RADAR_CRM_GEMINI_KEY') && (
                 <button 
                   onClick={handleClearKey}
                   className="text-[8px] font-black text-red-400 uppercase tracking-widest hover:text-red-300 transition-colors"
@@ -286,7 +286,7 @@ export default function App() {
                   Válida: {hasValidKey ? 'Sim' : 'Não'}
                 </div>
                 <div className="px-2 py-1 rounded bg-white/5 border border-white/10 text-[8px] text-white/40">
-                  Manual: {isMounted && safeLocalStorage.getItem('ELITE_CRM_GEMINI_KEY') ? 'Sim' : 'Não'}
+                  Manual: {isMounted && safeLocalStorage.getItem('RADAR_CRM_GEMINI_KEY') ? 'Sim' : 'Não'}
                 </div>
               </div>
             </div>
@@ -474,8 +474,8 @@ export default function App() {
                     <MessageSquare size={40} />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-white/40 tracking-tight">Nenhuma conversa analisada ainda</h3>
-                    <p className="text-sm text-white/20 mt-2">Inicie uma análise comportamental em qualquer lead para ver o histórico aqui.</p>
+                    <h3 className="text-xl font-display font-black text-white/40 tracking-tight">Nenhuma conversa analisada ainda</h3>
+                    <p className="text-sm text-white/20 mt-2">Inicie uma análise comportamental em qualquer lead para ver o histórico aqui no Radar.</p>
                   </div>
                   <button 
                     onClick={() => setActiveTab('dashboard')}

@@ -124,7 +124,7 @@ export const AIBrain: React.FC<AIBrainProps> = ({
                 <div className="relative">
                   <span className="text-[8px] font-black uppercase tracking-[0.4em] text-gold/40 block mb-2 flex items-center gap-2">
                     <div className="w-3 h-px bg-gold/20" />
-                    Observação Elite
+                    Observação Radar
                   </span>
                   <p className="text-sm text-white/50 leading-relaxed font-medium pl-5 relative">
                     <span className="absolute left-0 top-0 text-2xl text-gold/10 font-serif">"</span>
@@ -178,7 +178,7 @@ export const AIBrain: React.FC<AIBrainProps> = ({
             <BrainCircuit size={32} className="relative z-10 opacity-30 group-hover:opacity-60 transition-opacity" />
           </div>
           <div className="relative z-10">
-            <h3 className="text-xl font-display font-black text-white/80 mb-3 tracking-tighter">Pronto para a <span className="text-gradient-gold">Análise Global Elite</span>?</h3>
+            <h3 className="text-xl font-display font-black text-white/80 mb-3 tracking-tighter">Pronto para a <span className="text-gradient-gold">Análise Global Radar</span>?</h3>
             <p className="text-sm text-white/20 max-w-md mx-auto leading-relaxed font-medium">
               Clique no botão acima para que a IA analise seus {contacts.length} leads e identifique as melhores estratégias de fechamento.
             </p>

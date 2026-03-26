@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Corretor Virtual Elite",
-  description: "CRM Imobiliário de Elite com Inteligência Artificial",
+  title: "Radar CRM",
+  description: "CRM Imobiliário Estratégico com Inteligência Artificial",
   viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0",
 };
 

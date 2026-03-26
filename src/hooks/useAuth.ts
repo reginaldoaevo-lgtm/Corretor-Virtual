@@ -10,7 +10,7 @@ export const useAuth = () => {
   const [currentUser, setCurrentUser] = useState<User>({
     id: 'admin-default',
     name: 'Reginaldo Magalhaes',
-    email: 'reginaldo@elite.com',
+    email: 'reginaldo@radar.com',
     role: 'admin',
     status: 'Ativo'
   });
@@ -20,7 +20,7 @@ export const useAuth = () => {
     fetchTeamMembers();
     
     // Load current user from localStorage (session simulation)
-    const savedUser = safeLocalStorage.getItem('elite_crm_current_user');
+    const savedUser = safeLocalStorage.getItem('radar_crm_current_user');
     if (savedUser) {
       try {
         setCurrentUser(JSON.parse(savedUser));
@@ -42,7 +42,7 @@ export const useAuth = () => {
 
       if (data && data.length > 0) {
         setTeamMembers(data as User[]);
-        safeLocalStorage.setItem('elite_team_members', JSON.stringify(data));
+        safeLocalStorage.setItem('radar_team_members', JSON.stringify(data));
       } else {
         // Seed initial data if empty
         const initialMembers = [
@@ -55,12 +55,12 @@ export const useAuth = () => {
         
         if (!seedError && seededData) {
           setTeamMembers(seededData as User[]);
-          safeLocalStorage.setItem('elite_team_members', JSON.stringify(seededData));
+          safeLocalStorage.setItem('radar_team_members', JSON.stringify(seededData));
         }
       }
     } catch (error) {
       console.warn('Supabase fetch team members failed, using local storage:', error);
-      const localData = safeLocalStorage.getItem('elite_team_members');
+      const localData = safeLocalStorage.getItem('radar_team_members');
       if (localData) {
         try {
           setTeamMembers(JSON.parse(localData));
@@ -72,7 +72,7 @@ export const useAuth = () => {
   };
 
   useEffect(() => {
-    safeLocalStorage.setItem('elite_crm_current_user', JSON.stringify(currentUser));
+    safeLocalStorage.setItem('radar_crm_current_user', JSON.stringify(currentUser));
   }, [currentUser]);
 
   const addTeamMember = async (newMember: Omit<User, 'id'>) => {

@@ -139,12 +139,12 @@ export const useLeads = () => {
           behavioralHistory: item.behavioral_history || []
         }));
         setContacts(mappedContacts);
-        safeLocalStorage.setItem('elite_contacts', JSON.stringify(mappedContacts));
+        safeLocalStorage.setItem('radar_contacts', JSON.stringify(mappedContacts));
       }
     } catch (error) {
       console.warn('Supabase fetch failed, using local storage:', error);
       setIsSupabaseConnected(false);
-      const localData = safeLocalStorage.getItem('elite_contacts');
+      const localData = safeLocalStorage.getItem('radar_contacts');
       if (localData) {
         try {
           setContacts(JSON.parse(localData));
@@ -176,7 +176,7 @@ export const useLeads = () => {
     // Optimistic update
     const updatedContacts = [lead, ...contacts];
     setContacts(updatedContacts);
-    safeLocalStorage.setItem('elite_contacts', JSON.stringify(updatedContacts));
+    safeLocalStorage.setItem('radar_contacts', JSON.stringify(updatedContacts));
     setIsModalOpen(false);
 
     try {
@@ -212,7 +212,7 @@ export const useLeads = () => {
     // Optimistic update
     const updatedContacts = contacts.filter(c => c.id !== id);
     setContacts(updatedContacts);
-    safeLocalStorage.setItem('elite_contacts', JSON.stringify(updatedContacts));
+    safeLocalStorage.setItem('radar_contacts', JSON.stringify(updatedContacts));
     if (selectedContact?.id === id) setSelectedContact(null);
 
     try {
@@ -231,7 +231,7 @@ export const useLeads = () => {
     // Optimistic update
     const updatedContacts = contacts.map(c => c.id === id ? { ...c, status: newStatus } : c);
     setContacts(updatedContacts);
-    safeLocalStorage.setItem('elite_contacts', JSON.stringify(updatedContacts));
+    safeLocalStorage.setItem('radar_contacts', JSON.stringify(updatedContacts));
     if (selectedContact?.id === id) {
       setSelectedContact(prev => prev ? { ...prev, status: newStatus } : null);
     }
@@ -252,7 +252,7 @@ export const useLeads = () => {
     // Optimistic update
     const updatedContacts = contacts.map(c => c.id === updatedContact.id ? updatedContact : c);
     setContacts(updatedContacts);
-    safeLocalStorage.setItem('elite_contacts', JSON.stringify(updatedContacts));
+    safeLocalStorage.setItem('radar_contacts', JSON.stringify(updatedContacts));
     if (selectedContact?.id === updatedContact.id) {
       setSelectedContact(updatedContact);
     }

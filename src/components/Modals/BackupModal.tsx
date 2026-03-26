@@ -161,7 +161,7 @@ export const BackupModal: React.FC<BackupModalProps> = ({
             ) : importStatus === 'error' ? (
               <>Erro no Formato</>
             ) : (
-              'Iniciar Importação Elite'
+              'Iniciar Importação Radar'
             )}
           </button>
         </div>

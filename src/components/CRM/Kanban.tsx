@@ -261,7 +261,7 @@ export const Kanban: React.FC<KanbanProps> = ({
             </div>
           </div>
           <div>
-            <h2 className="text-sm font-display font-black text-white tracking-tighter leading-tight uppercase">Gestão de <span className="text-gradient-gold">Leads Elite</span></h2>
+            <h2 className="text-sm font-display font-black text-white tracking-tighter leading-tight uppercase">Gestão de <span className="text-gradient-gold">Leads Radar</span></h2>
           </div>
         </div>
 

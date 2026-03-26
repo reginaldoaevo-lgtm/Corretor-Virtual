@@ -45,7 +45,7 @@ export const LeadModal: React.FC<LeadModalProps> = ({
         
         <div className="flex justify-between items-start mb-6 relative z-10">
           <div>
-            <h3 className="text-2xl font-display font-black text-white tracking-tighter">Novo Lead de <span className="text-gradient-gold">Elite</span></h3>
+            <h3 className="text-2xl font-display font-black text-white tracking-tighter">Novo Lead <span className="text-gradient-gold">Radar</span></h3>
             <p className="text-xs text-white/30 mt-1.5 font-medium">Inicie o acompanhamento estratégico</p>
           </div>
           <button 
@@ -83,7 +83,7 @@ export const LeadModal: React.FC<LeadModalProps> = ({
           </div>
 
           <div className="space-y-2">
-            <label className="block text-[8px] font-black uppercase tracking-[0.3em] text-gold/60 ml-2">Imóvel de Interesse Elite</label>
+            <label className="block text-[8px] font-black uppercase tracking-[0.3em] text-gold/60 ml-2">Imóvel de Interesse Radar</label>
             <input 
               required
               value={newLead.property}
@@ -107,7 +107,7 @@ export const LeadModal: React.FC<LeadModalProps> = ({
                         <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center mb-1.5 group-hover:bg-gold/10 transition-colors">
                           <Upload size={20} className="opacity-20 group-hover:opacity-100 transition-opacity" />
                         </div>
-                        <span className="text-[8px] font-black uppercase tracking-[0.2em]">Upload Foto Elite</span>
+                        <span className="text-[8px] font-black uppercase tracking-[0.2em]">Upload Foto Radar</span>
                       </>
                     )}
                   </div>
@@ -161,7 +161,7 @@ export const LeadModal: React.FC<LeadModalProps> = ({
             className="w-full py-3 bg-gradient-to-br from-gold-light via-gold to-gold-dark text-navy font-black text-[9px] uppercase tracking-[0.3em] rounded-xl hover:bg-white transition-all duration-700 shadow-[0_15px_35px_rgba(212,175,55,0.3)] mt-4 hover:scale-[1.03] active:scale-[0.97] border border-white/20 relative overflow-hidden group"
           >
             <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-500" />
-            Cadastrar Lead no Pipeline Elite
+            Cadastrar Lead no Pipeline Radar
           </button>
         </form>
       </motion.div>

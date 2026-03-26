@@ -40,7 +40,7 @@ export const TeamManagement: React.FC<TeamManagementProps> = ({
             <div className="absolute inset-0 bg-gold/20 blur-2xl rounded-full opacity-50" />
           </div>
           <div>
-            <h2 className="text-xl font-display font-black text-white tracking-tighter leading-tight">Gestão de <span className="text-gradient-gold">Equipe Elite</span></h2>
+            <h2 className="text-xl font-display font-black text-white tracking-tighter leading-tight">Gestão de <span className="text-gradient-gold">Equipe Radar</span></h2>
             <div className="flex items-center gap-2 mt-2">
               <div className="h-px w-6 bg-gold/30" />
               <p className="text-sm text-white/40 font-medium">Controle de acessos e permissões para sua força de vendas</p>
@@ -61,7 +61,7 @@ export const TeamManagement: React.FC<TeamManagementProps> = ({
                 </div>
                 <div>
                   <h3 className="font-black text-lg text-white tracking-tighter">Novo Corretor</h3>
-                  <p className="text-[8px] uppercase tracking-[0.2em] text-white/20 font-black mt-0.5">Expanda sua força de elite</p>
+                  <p className="text-[8px] uppercase tracking-[0.2em] text-white/20 font-black mt-0.5">Expanda sua força estratégica</p>
                 </div>
               </div>
 
@@ -115,7 +115,7 @@ export const TeamManagement: React.FC<TeamManagementProps> = ({
                       className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-gold/50 transition-all appearance-none cursor-pointer hover:bg-white/[0.08] font-black shadow-inner backdrop-blur-xl pr-12"
                     >
                       <option value="premium" className="bg-navy">Corretor Premium</option>
-                      <option value="elite" className="bg-navy">Corretor Elite</option>
+                      <option value="elite" className="bg-navy">Corretor Radar</option>
                       <option value="admin" className="bg-navy">Gestor / Admin</option>
                     </select>
                     <ChevronDown size={18} className="absolute right-6 top-1/2 -translate-y-1/2 text-white/20 pointer-events-none group-focus-within:text-gold transition-colors" />
@@ -123,7 +123,7 @@ export const TeamManagement: React.FC<TeamManagementProps> = ({
                 </div>
                 <button type="submit" className="w-full py-2 bg-gradient-to-br from-gold-light via-gold to-gold-dark text-navy font-black text-[10px] uppercase tracking-[0.3em] rounded-xl hover:bg-white hover:text-navy transition-all duration-700 shadow-[0_15px_35px_rgba(212,175,55,0.3)] mt-6 hover:scale-[1.03] active:scale-[0.97] border border-white/20 relative overflow-hidden group">
                   <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-500" />
-                  Ativar no Sistema Elite
+                  Ativar no Sistema Radar
                 </button>
               </form>
             </div>
@@ -182,7 +182,7 @@ export const TeamManagement: React.FC<TeamManagementProps> = ({
                       <span className="text-[9px] uppercase font-black text-gold/60 tracking-[0.3em] flex items-center gap-1.5">
                         <div className="w-1 h-1 rounded-full bg-gold/40" />
                         {member.role === 'admin' ? 'Gestor Master' : 
-                         member.role === 'elite' ? 'Corretor Elite' : 
+                         member.role === 'elite' ? 'Corretor Radar' : 
                          'Corretor Premium'}
                       </span>
                     </div>
