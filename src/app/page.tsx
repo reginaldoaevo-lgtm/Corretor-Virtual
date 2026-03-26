@@ -1,13 +1,14 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
-import { ErrorBoundary } from './Componentes/ErrorBoundary'
-import './Aplicativo/globals.css'
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <ErrorBoundary>
+// Este é o ponto de partida que a Vercel precisa para ligar o React
+const rootElement = document.getElementById('root');
+
+if (rootElement) {
+  ReactDOM.createRoot(rootElement).render(
+    <React.StrictMode>
       <App />
-    </ErrorBoundary>
-  </React.StrictMode>
-)
+    </React.StrictMode>
+  )
+}
