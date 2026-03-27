@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-// Importe garantindo que o "A" seja maiúsculo como no seu arquivo
+// Import ensuring that the "A" is capitalized as in your file
 import App from './App'
 
 const rootElement = document.getElementById('root');
