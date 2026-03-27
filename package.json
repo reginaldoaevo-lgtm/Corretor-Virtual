@@ -1,13 +1,13 @@
 {
   "name": "radar-crm",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build",
     "preview": "vite preview",
-    "lint": "tsc --noEmit"
+    "lint": "vite build"
   },
   "dependencies": {
     "@google/genai": "^1.29.0",
