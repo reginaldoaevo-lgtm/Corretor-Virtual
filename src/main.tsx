@@ -1,10 +1,11 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App' // Importing the main component App.tsx
-const root = document.getElementById('root');
+import App from './App' // 'A' Importing the main component App.tsx
 
-if (root) {
-  ReactDOM.createRoot(root).render(
+const rootElement = document.getElementById('root');
+
+if (rootElement) {
+  ReactDOM.createRoot(rootElement).render(
     <React.StrictMode>
       <App />
     </React.StrictMode>
