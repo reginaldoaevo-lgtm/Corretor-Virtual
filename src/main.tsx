@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App' // 'A' Importing the main component App.tsx
+import App from './App' // 'A' maiúsculo para bater com o arquivo App.tsx
 
 const rootElement = document.getElementById('root');
 
