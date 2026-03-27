@@ -7,18 +7,17 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Custom colors for an elite look
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
-        background: "#000000", // Pure black background
+        background: "#000000",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "#D4AF37", // Main Metallic Gold
+          DEFAULT: "#D4AF37",
           foreground: "#000000",
         },
         secondary: {
-          DEFAULT: "#1C1C1C", // Secondary Onyx Black
+          DEFAULT: "#1C1C1C",
           foreground: "#FFFFFF",
         },
         destructive: {
@@ -26,11 +25,11 @@ export default {
           foreground: "hsl(var(--destructive-foreground))",
         },
         muted: {
-          DEFAULT: "#111111", // Light Dark Gray
+          DEFAULT: "#111111",
           foreground: "#A0A0A0",
         },
         accent: {
-          DEFAULT: "#FFD700", // Bright Gold for Highlights
+          DEFAULT: "#FFD700",
           foreground: "#000000",
         },
         popover: {
@@ -38,7 +37,7 @@ export default {
           foreground: "#FFFFFF",
         },
         card: {
-          DEFAULT: "#050505", // Near Pure Black for the Cards
+          DEFAULT: "#050505",
           foreground: "#FFFFFF",
         },
       },
@@ -48,7 +47,6 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        // Inter font for a modern look
         sans: ["Inter", "ui-sans-serif", "system-ui"],
       },
     },
