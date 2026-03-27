@@ -1,6 +1,7 @@
 {
   "name": "radar-crm",
   "private": true,
+  "@tailwindcss/postcss": "^4.0.0",
   "version": "0.1.2",
   "type": "module",
   "scripts": {
