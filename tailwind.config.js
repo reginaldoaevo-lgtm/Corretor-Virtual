@@ -4,22 +4,25 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  darkMode: "class",
   theme: {
     extend: {
       colors: {
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
+        background: "#0a0a0b",
+        foreground: "#ffffff",
         primary: {
-          DEFAULT: "#D4AF37", // CRM Radar Gold
+          DEFAULT: "#eab308", // Gold/Yellow
+          foreground: "#000000",
+        },
+        card: {
+          DEFAULT: "#121214",
           foreground: "#ffffff",
         },
-        secondary: {
-          DEFAULT: "#1A1A1A", // Dark Gray
-          foreground: "#ffffff",
-        },
+      },
+      borderRadius: {
+        lg: "12px",
+        md: "8px",
+        sm: "4px",
       },
     },
   },
