@@ -270,8 +270,8 @@ export const useLeads = () => {
           temperature: updatedContact.temperature,
           summary: updatedContact.summary,
           conversation_history: updatedContact.conversationHistory,
-          behavioral_analysis: updatedContact.behavioralAnalysis,
-          behavioral_history: updatedContact.behavioralHistory
+          behavioral_analysis: updatedContact.behavioralAnalysis as any,
+          behavioral_history: updatedContact.behavioralHistory as any
         })
         .eq('id', updatedContact.id);
 

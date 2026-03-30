@@ -24,6 +24,8 @@ export interface Database {
           temperature: string
           user_id: string | null
           conversation_history: string | null
+          behavioral_analysis: Json | null
+          behavioral_history: Json[] | null
         }
         Insert: {
           budget: string
@@ -39,6 +41,8 @@ export interface Database {
           temperature?: string
           user_id?: string | null
           conversation_history?: string | null
+          behavioral_analysis?: Json | null
+          behavioral_history?: Json[] | null
         }
         Update: {
           budget?: string
@@ -54,6 +58,8 @@ export interface Database {
           temperature?: string
           user_id?: string | null
           conversation_history?: string | null
+          behavioral_analysis?: Json | null
+          behavioral_history?: Json[] | null
         }
         Relationships: [
           {

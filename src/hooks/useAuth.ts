@@ -8,9 +8,9 @@ import { safeLocalStorage } from '../lib/storage';
 export const useAuth = () => {
   const [teamMembers, setTeamMembers] = useState<User[]>([]);
   const [currentUser, setCurrentUser] = useState<User>({
-    id: 'admin-default',
-    name: 'Reginaldo Magalhaes',
-    email: 'reginaldo@radar.com',
+    id: '00000000-0000-0000-0000-000000000000',
+    name: 'Reginaldo Aevo',
+    email: 'reginaldo.aevo@gmail.com',
     role: 'admin',
     status: 'Ativo'
   });

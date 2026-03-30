@@ -24,6 +24,9 @@ CREATE TABLE IF NOT EXISTS contacts (
   last_interaction TIMESTAMPTZ DEFAULT NOW(),
   created_at TIMESTAMPTZ DEFAULT NOW(),
   summary TEXT DEFAULT '',
+  conversation_history TEXT DEFAULT '',
+  behavioral_analysis JSONB,
+  behavioral_history JSONB DEFAULT '[]'::jsonb,
   user_id UUID REFERENCES team_members(id) ON DELETE SET NULL
 );
 
