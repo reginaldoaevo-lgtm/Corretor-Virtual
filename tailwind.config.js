@@ -8,7 +8,9 @@ export default {
     extend: {
       colors: {
         background: "#0a0a0a",
-        primary: "#D4AF37", // Golden Radar
+        foreground: "#ffffff",
+        primary: "#D4AF37",
+        border: "#1f1f23",
       },
     },
   },
