@@ -20,7 +20,6 @@ import { motion } from 'motion/react';
 import { useAuth } from './hooks/useAuth';
 import { useLeads } from './hooks/useLeads';
 import { useAI } from './hooks/useAI';
-import { ErrorBoundary } from './components/ErrorBoundary';
 import { Sidebar } from './components/Sidebar';
 import { Layout } from './components/Layout';
 import { Kanban } from './components/CRM/Kanban';
@@ -32,7 +31,7 @@ import { LeadModal } from './components/Modals/LeadModal';
 import { BackupModal } from './components/Modals/BackupModal';
 import { SwitchUserModal } from './components/Modals/SwitchUserModal';
 import { ContactDetailModal } from './components/Modals/ContactDetailModal';
-import { Temperature, User } from './types';
+import { Temperature, User, Contact } from './types';
 import { testSupabaseConnection } from './lib/supabase';
 import { testGeminiConnection } from './services/geminiService';
 
@@ -50,10 +49,8 @@ const getApiKey = () => {
   
   const localKey = safeLocalStorage.getItem('RADAR_CRM_GEMINI_KEY') || '';
 
-  // 1. Check manual key first (user intent is strongest here)
   if (localKey && validateKey(localKey)) return localKey.trim();
 
-  // 2. Check environment variables
   const envKey = [
     process.env.NEXT_PUBLIC_GEMINI_API_KEY,
     process.env.GEMINI_API_KEY,
@@ -121,14 +118,15 @@ export default function App() {
     console.log("🗑️ Chave manual removida.");
     window.location.reload();
   };
+
   const { 
     teamMembers, 
-    setTeamMembers, 
     currentUser, 
     setCurrentUser, 
     addTeamMember, 
     deleteTeamMember 
   } = useAuth();
+
   const { 
     contacts, 
     selectedContact, 
@@ -148,17 +146,6 @@ export default function App() {
 
   const [isBackupModalOpen, setIsBackupModalOpen] = useState(false);
 
-  const setSelectedContact = (contact: any) => {
-    setLeadsSelectedContact(contact);
-    if (contact) {
-      setConversation(contact.conversationHistory || '');
-      setAiResponse(contact.behavioralAnalysis || null);
-    } else {
-      setConversation('');
-      setAiResponse(null);
-    }
-  };
-  
   const {
     conversation,
     setConversation,
@@ -172,8 +159,25 @@ export default function App() {
     handleGlobalAnalysis,
     copyToClipboard,
     analysisImage,
-    setAnalysisImage
+    setAnalysisImage,
+    analysisAudio,
+    setAnalysisAudio,
+    error,
+    setError
   } = useAI();
+
+  const setSelectedContact = (contact: Contact | null) => {
+    setLeadsSelectedContact(contact);
+    if (contact) {
+      setConversation(contact.conversationHistory || '');
+      setAiResponse(contact.behavioralAnalysis || null);
+    } else {
+      setConversation('');
+      setAiResponse(null);
+      setAnalysisImage('');
+      setAnalysisAudio('');
+    }
+  };
 
   const [activeId, setActiveId] = useState<string | null>(null);
   const [showSessionMenu, setShowSessionMenu] = useState(false);
@@ -367,10 +371,8 @@ export default function App() {
       setSelectedUserToSwitch(null);
       setSwitchPassword('');
       setActiveTab('dashboard');
-      // Removed alert for better iframe compatibility
       console.log(`Bem-vindo de volta, ${selectedUserToSwitch.name}!`);
     } else {
-      // Removed alert for better iframe compatibility
       console.warn("Senha incorreta!");
     }
   };
@@ -513,10 +515,34 @@ export default function App() {
           <AIBrain 
             isGlobalLoading={isGlobalLoading}
             globalAnalyses={globalAnalyses as any}
-            handleGlobalAnalysis={() => handleGlobalAnalysis(contacts)}
+            handleGlobalAnalysis={async () => {
+              const analyses = await handleGlobalAnalysis(contacts);
+              if (analyses && analyses.length > 0) {
+                analyses.forEach(analysis => {
+                  const contact = contacts.find(c => c.id === analysis.contactId);
+                  if (contact) {
+                    const newAnalysis = {
+                      idealResponse: analysis.nextAction,
+                      masterStrategy: analysis.observation,
+                      suggestedTemperature: analysis.suggestedTemperature,
+                      timestamp: new Date().toISOString()
+                    };
+                    
+                    handleUpdateContact({
+                      ...contact,
+                      temperature: analysis.suggestedTemperature,
+                      behavioralAnalysis: newAnalysis,
+                      behavioralHistory: [newAnalysis, ...(contact.behavioralHistory || [])]
+                    });
+                  }
+                });
+              }
+            }}
             setSelectedContact={setSelectedContact}
             contacts={contacts}
             geminiStatus={geminiStatus}
+            error={error}
+            setError={setError}
           />
         );
       default:
@@ -557,7 +583,13 @@ export default function App() {
             handleGenerate={async () => {
               if (!selectedContact) return;
               const currentContactId = selectedContact.id;
-              const response = await handleGenerate(selectedContact.name, selectedContact.property);
+              
+              // CORREÇÃO AQUI: Enviando a conversa atualizada, áudio e imagem para análise completa
+              const response = await handleGenerate(
+                conversation, 
+                analysisImage, 
+                analysisAudio
+              );
               
               if (response && selectedContact && selectedContact.id === currentContactId) {
                 const updatedHistory = [
@@ -567,8 +599,10 @@ export default function App() {
                 
                 handleUpdateContact({
                   ...selectedContact,
+                  conversationHistory: conversation, // Persiste o histórico digitado
                   behavioralAnalysis: response,
-                  behavioralHistory: updatedHistory
+                  behavioralHistory: updatedHistory,
+                  temperature: response.suggestedTemperature || selectedContact.temperature
                 });
               }
             }}
@@ -579,6 +613,10 @@ export default function App() {
             copied={copied}
             analysisImage={analysisImage}
             setAnalysisImage={setAnalysisImage}
+            analysisAudio={analysisAudio}
+            setAnalysisAudio={setAnalysisAudio}
+            error={error}
+            setError={setError}
           />
         )}
 
@@ -614,5 +652,5 @@ export default function App() {
           handleConfirmSwitch={handleConfirmSwitch}
         />
       </div>
-    );
+  );
 }
