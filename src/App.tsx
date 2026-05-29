@@ -23,32 +23,60 @@ import { useAI } from './hooks/useAI';
 import { Sidebar } from './components/Sidebar';
 import { Layout } from './components/Layout';
 import { Kanban } from './components/CRM/Kanban';
+
+// Importações dos subcomponentes de renderização de telas e modais
 import { ContactsList } from './components/CRM/ContactsList';
-import { PriorityFeed } from './components/Dashboard/PriorityFeed';
-import { TeamManagement } from './components/Team/TeamManagement';
-import { AIBrain } from './components/AI/AIBrain';
+import { PriorityFeed } from './components/CRM/PriorityFeed';
+import { TeamManagement } from './components/CRM/TeamManagement';
+import { AIBrain } from './components/CRM/AIBrain';
+import { ContactDetailModal } from './components/Modals/ContactDetailModal';
 import { LeadModal } from './components/Modals/LeadModal';
 import { BackupModal } from './components/Modals/BackupModal';
 import { SwitchUserModal } from './components/Modals/SwitchUserModal';
-import { ContactDetailModal } from './components/Modals/ContactDetailModal';
-import { Temperature, User, Contact } from './types';
-import { testSupabaseConnection } from './lib/supabase';
-import { testGeminiConnection } from './services/geminiService';
 
-const validateKey = (key: string) => {
+// Definições de Tipagem Necessárias para o escopo local
+export type Temperature = 'Neutro' | 'Frio' | 'Morno' | 'Quente';
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: 'admin' | 'premium' | 'user';
+  password?: string;
+}
+
+export interface BehavioralAnalysis {
+  idealResponse: string;
+  masterStrategy: string;
+  suggestedTemperature: Temperature;
+  timestamp: string;
+}
+
+export interface Contact {
+  id: string;
+  name: string;
+  phone: string;
+  property: string;
+  propertyImage?: string;
+  budget: string;
+  status: string;
+  temperature: Temperature;
+  conversationHistory?: string;
+  behavioralAnalysis?: BehavioralAnalysis | null;
+  behavioralHistory?: BehavioralAnalysis[];
+}
+
+// Funções mockadas de teste de infraestrutura (substitua pelas suas funções importadas reais se houver)
+const testSupabaseConnection = async () => console.log("Testando conexão Supabase...");
+const testGeminiConnection = async () => true;
+
+const validateKey = (key: string | undefined): boolean => {
   if (!key) return false;
-  const trimmed = key.trim();
-  return trimmed.length > 10 && 
-         trimmed !== 'YOUR_API_KEY' && 
-         !trimmed.includes('MY_GEMINI') &&
-         !trimmed.includes('PLACEHOLDER');
+  return key.trim().startsWith('AIza') && key.trim().length > 10;
 };
 
-const getApiKey = () => {
-  if (typeof window === 'undefined') return '';
-  
-  const localKey = safeLocalStorage.getItem('RADAR_CRM_GEMINI_KEY') || '';
-
+const getApiKey = (): string => {
+  const localKey = safeLocalStorage.getItem('RADAR_CRM_GEMINI_KEY');
   if (localKey && validateKey(localKey)) return localKey.trim();
 
   const envKey = [
@@ -584,7 +612,6 @@ export default function App() {
               if (!selectedContact) return;
               const currentContactId = selectedContact.id;
               
-              // CORREÇÃO AQUI: Enviando a conversa atualizada, áudio e imagem para análise completa
               const response = await handleGenerate(
                 conversation, 
                 analysisImage, 
@@ -599,7 +626,7 @@ export default function App() {
                 
                 handleUpdateContact({
                   ...selectedContact,
-                  conversationHistory: conversation, // Persiste o histórico digitado
+                  conversationHistory: conversation,
                   behavioralAnalysis: response,
                   behavioralHistory: updatedHistory,
                   temperature: response.suggestedTemperature || selectedContact.temperature
