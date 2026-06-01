@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { GlobalAnalysisItem } from '../../services/geminiService';
+import { TemperatureBadge } from '../Common';
 
 interface AIBrainProps {
   isGlobalLoading: boolean;
@@ -16,6 +17,8 @@ interface AIBrainProps {
   setSelectedContact: (contact: any) => void;
   contacts: any[];
   geminiStatus: 'idle' | 'checking' | 'connected' | 'error';
+  error?: string | null;
+  setError?: (error: string | null) => void;
 }
 
 export const AIBrain: React.FC<AIBrainProps> = ({
@@ -24,7 +27,9 @@ export const AIBrain: React.FC<AIBrainProps> = ({
   handleGlobalAnalysis,
   setSelectedContact,
   contacts,
-  geminiStatus
+  geminiStatus,
+  error,
+  setError
 }) => {
   return (
     <motion.div 
@@ -33,6 +38,27 @@ export const AIBrain: React.FC<AIBrainProps> = ({
       exit={{ opacity: 0, y: -20 }}
       className="h-full flex flex-col space-y-8"
     >
+      {error && (
+        <motion.div 
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          className="bg-red-500/10 border border-red-500/20 p-4 rounded-2xl flex items-center justify-between gap-4"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center text-red-500">
+              <Sparkles size={16} />
+            </div>
+            <p className="text-sm text-red-200/80 font-medium">{error}</p>
+          </div>
+          <button 
+            onClick={() => setError?.(null)}
+            className="text-[10px] font-black uppercase tracking-widest text-white/40 hover:text-white transition-colors"
+          >
+            [Fechar]
+          </button>
+        </motion.div>
+      )}
+
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 shrink-0">
         <div className="flex items-center gap-4">
           <div className="relative">
@@ -118,6 +144,11 @@ export const AIBrain: React.FC<AIBrainProps> = ({
                     </div>
                   </div>
                 </div>
+                {item.suggestedTemperature && (
+                  <div className="scale-75 origin-right">
+                    <TemperatureBadge temperature={item.suggestedTemperature} />
+                  </div>
+                )}
               </div>
 
               <div className="space-y-6 flex-1 relative z-10">

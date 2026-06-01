@@ -1,0 +1,33 @@
+{
+  "name": "Radar CRM - Inteligência Imobiliária",
+  "short_name": "Radar CRM",
+  "description": "CRM estratégico com IA para alta performance imobiliária.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#050A18",
+  "theme_color": "#D4AF37",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://picsum.photos/seed/radar-icon-192/192/192",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://picsum.photos/seed/radar-icon-512/512/512",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "productivity"],
+  "screenshots": [
+    {
+      "src": "https://picsum.photos/seed/radar-screen/1280/720",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ]
+}

@@ -10,12 +10,13 @@ import {
   MessageCircle, 
   Phone, 
   ImageIcon,
+  Mic,
   History,
   Calendar
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { Contact, AIResponse, FunnelStatus } from '../../types';
-import { TemperatureBadge, InfoRow, getStageIcon, openWhatsApp } from '../Common';
+import { TemperatureBadge, InfoRow, getStageIcon, openWhatsApp, makeCall } from '../Common';
 
 interface ContactDetailModalProps {
   selectedContact: Contact;
@@ -33,6 +34,10 @@ interface ContactDetailModalProps {
   copied: boolean;
   analysisImage: string | null;
   setAnalysisImage: (img: string | null) => void;
+  analysisAudio: string | null;
+  setAnalysisAudio: (audio: string | null) => void;
+  error?: string | null;
+  setError?: (error: string | null) => void;
 }
 
 export const ContactDetailModal: React.FC<ContactDetailModalProps> = ({
@@ -50,7 +55,11 @@ export const ContactDetailModal: React.FC<ContactDetailModalProps> = ({
   copyToClipboard,
   copied,
   analysisImage,
-  setAnalysisImage
+  setAnalysisImage,
+  analysisAudio,
+  setAnalysisAudio,
+  error,
+  setError
 }) => {
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -58,6 +67,17 @@ export const ContactDetailModal: React.FC<ContactDetailModalProps> = ({
       const reader = new FileReader();
       reader.onloadend = () => {
         setAnalysisImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleAudioUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAnalysisAudio(reader.result as string);
       };
       reader.readAsDataURL(file);
     }
@@ -199,7 +219,10 @@ export const ContactDetailModal: React.FC<ContactDetailModalProps> = ({
                     </div>
                     <span className="text-[9px] font-black text-green-500 uppercase tracking-[0.3em]">WhatsApp</span>
                   </button>
-                  <button className="flex flex-col items-center gap-3 p-4 rounded-2xl bg-blue-500/5 border border-blue-500/10 hover:bg-blue-500/10 transition-all duration-700 group shadow-2xl">
+                  <button 
+                    onClick={() => makeCall(selectedContact.phone)}
+                    className="flex flex-col items-center gap-3 p-4 rounded-2xl bg-blue-500/5 border border-blue-500/10 hover:bg-blue-500/10 transition-all duration-700 group shadow-2xl"
+                  >
                     <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-500 group-hover:scale-110 group-hover:-rotate-12 transition-all duration-700 shadow-[0_10px_20px_rgba(59,130,246,0.3)]">
                       <Phone size={20} />
                     </div>
@@ -261,29 +284,75 @@ export const ContactDetailModal: React.FC<ContactDetailModalProps> = ({
                         </div>
                       </div>
 
-                      <div className="relative h-48 bg-navy/40 border border-white/10 rounded-2xl flex flex-col items-center justify-center overflow-hidden group cursor-pointer hover:border-gold/30 transition-all">
-                        {analysisImage ? (
-                          <>
-                            <img src={analysisImage} alt="Analysis" className="w-full h-full object-cover opacity-50 group-hover:opacity-70 transition-opacity" />
-                            <div className="absolute inset-0 flex flex-col items-center justify-center bg-navy/60 opacity-0 group-hover:opacity-100 transition-opacity">
-                              <button 
-                                onClick={() => setAnalysisImage(null)}
-                                className="px-4 py-2 bg-red-500/20 text-red-500 rounded-lg text-[8px] font-black uppercase tracking-widest border border-red-500/30"
-                              >
-                                Remover Print
-                              </button>
-                            </div>
-                          </>
-                        ) : (
-                          <label className="w-full h-full flex flex-col items-center justify-center cursor-pointer">
-                            <ImageIcon size={32} className="text-white/10 mb-2 group-hover:text-gold/40 transition-colors" />
-                            <span className="text-[8px] font-black uppercase tracking-widest text-white/20 group-hover:text-gold/40">Upload de Print</span>
-                            <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
-                          </label>
-                        )}
+                      <div className="grid grid-cols-1 gap-4">
+                        <div className="relative h-[92px] bg-navy/40 border border-white/10 rounded-2xl flex flex-col items-center justify-center overflow-hidden group cursor-pointer hover:border-gold/30 transition-all">
+                          {analysisImage ? (
+                            <>
+                              <img src={analysisImage} alt="Analysis" className="w-full h-full object-cover opacity-50 group-hover:opacity-70 transition-opacity" />
+                              <div className="absolute inset-0 flex flex-col items-center justify-center bg-navy/60 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button 
+                                  onClick={() => setAnalysisImage(null)}
+                                  className="px-4 py-2 bg-red-500/20 text-red-500 rounded-lg text-[8px] font-black uppercase tracking-widest border border-red-500/30"
+                                >
+                                  Remover Print
+                                </button>
+                              </div>
+                            </>
+                          ) : (
+                            <label className="w-full h-full flex flex-col items-center justify-center cursor-pointer">
+                              <ImageIcon size={24} className="text-white/10 mb-1 group-hover:text-gold/40 transition-colors" />
+                              <span className="text-[8px] font-black uppercase tracking-widest text-white/20 group-hover:text-gold/40">Upload de Print</span>
+                              <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+                            </label>
+                          )}
+                        </div>
+
+                        <div className="relative h-[92px] bg-navy/40 border border-white/10 rounded-2xl flex flex-col items-center justify-center overflow-hidden group cursor-pointer hover:border-gold/30 transition-all">
+                          {analysisAudio ? (
+                            <>
+                              <div className="flex flex-col items-center justify-center">
+                                <Mic size={24} className="text-gold animate-pulse mb-1" />
+                                <span className="text-[8px] font-black uppercase tracking-widest text-gold">Áudio Carregado</span>
+                              </div>
+                              <div className="absolute inset-0 flex flex-col items-center justify-center bg-navy/60 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button 
+                                  onClick={() => setAnalysisAudio(null)}
+                                  className="px-4 py-2 bg-red-500/20 text-red-500 rounded-lg text-[8px] font-black uppercase tracking-widest border border-red-500/30"
+                                >
+                                  Remover Áudio
+                                </button>
+                              </div>
+                            </>
+                          ) : (
+                            <label className="w-full h-full flex flex-col items-center justify-center cursor-pointer">
+                              <Mic size={24} className="text-white/10 mb-1 group-hover:text-gold/40 transition-colors" />
+                              <span className="text-[8px] font-black uppercase tracking-widest text-white/20 group-hover:text-gold/40">Upload de Áudio</span>
+                              <input type="file" accept="audio/*" className="hidden" onChange={handleAudioUpload} />
+                            </label>
+                          )}
+                        </div>
                       </div>
                     </div>
                     
+                    {error && (
+                      <motion.div 
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="bg-red-500/10 border border-red-500/20 p-4 rounded-2xl flex items-center justify-between gap-4 mb-4"
+                      >
+                        <div className="flex items-center gap-3">
+                          <Sparkles size={16} className="text-red-500" />
+                          <p className="text-xs text-red-200/80 font-medium">{error}</p>
+                        </div>
+                        <button 
+                          onClick={() => setError?.(null)}
+                          className="text-[10px] font-black uppercase tracking-widest text-white/40 hover:text-white transition-colors"
+                        >
+                          [X]
+                        </button>
+                      </motion.div>
+                    )}
+
                     <button 
                       onClick={handleGenerate}
                       disabled={isLoading || (!conversation.trim() && !analysisImage)}
@@ -347,6 +416,10 @@ export const ContactDetailModal: React.FC<ContactDetailModalProps> = ({
                       </div>
                       Análise Psicológica & Estratégia
                     </h4>
+                    <div className="flex items-center gap-3 mb-4 relative z-10">
+                      <span className="text-[8px] font-black text-white/30 uppercase tracking-widest">Temperatura Sugerida:</span>
+                      <TemperatureBadge temperature={aiResponse.suggestedTemperature} />
+                    </div>
                     <p className="text-base text-white/50 leading-relaxed font-light relative z-10 italic">
                       {aiResponse.masterStrategy}
                     </p>

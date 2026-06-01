@@ -262,6 +262,19 @@ export const Kanban: React.FC<KanbanProps> = ({
           </div>
           <div>
             <h2 className="text-sm font-display font-black text-white tracking-tighter leading-tight uppercase">Gestão de <span className="text-gradient-gold">Leads Radar</span></h2>
+            <div className="flex items-center gap-2 mt-0.5">
+              <p className="text-[7px] text-white/30 font-black uppercase tracking-widest">Link de Acesso:</p>
+              <button 
+                onClick={() => {
+                  const url = window.location.origin;
+                  navigator.clipboard.writeText(url);
+                  console.log("Link copiado:", url);
+                }}
+                className="text-[7px] text-gold/60 hover:text-gold transition-colors font-bold truncate max-w-[150px]"
+              >
+                {window.location.origin.replace('https://', '').replace('http://', '')}
+              </button>
+            </div>
           </div>
         </div>
 

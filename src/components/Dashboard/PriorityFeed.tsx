@@ -30,9 +30,9 @@ export const PriorityFeed: React.FC<PriorityFeedProps> = ({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className="h-full space-y-6"
+      className="flex flex-col h-full space-y-6"
     >
-      <div className="flex items-center gap-6">
+      <div className="flex items-center gap-6 shrink-0">
         <div className="w-16 h-16 rounded-[24px] bg-gradient-to-br from-gold/30 to-gold/5 flex items-center justify-center text-gold border border-gold/30 shadow-[0_15px_40px_rgba(212,175,55,0.2)] gold-glow">
           <Zap size={32} className="animate-pulse" />
         </div>
@@ -42,8 +42,9 @@ export const PriorityFeed: React.FC<PriorityFeedProps> = ({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-6">
-        {prioritizedLeads.map((lead) => (
+      <div className="flex-1 overflow-y-auto pr-4 custom-scrollbar">
+        <div className="grid grid-cols-1 gap-6 pb-8">
+          {prioritizedLeads.map((lead) => (
           <motion.div 
             key={lead.id}
             initial={{ opacity: 0, x: -10 }}
@@ -72,9 +73,12 @@ export const PriorityFeed: React.FC<PriorityFeedProps> = ({
               </div>
 
               <p className="text-sm text-white/30 leading-relaxed max-w-4xl font-medium italic">
-                {lead.score > 70 
-                  ? "Este lead demonstrou alto interesse e está em estágio inicial. A probabilidade de conversão é 85% maior se contatado nos próximos 15 minutos."
-                  : "Lead qualificado com bom potencial de fechamento. Mantenha o fluxo de nutrição ativo para garantir a progressão no funil."}
+                {lead.behavioralAnalysis?.masterStrategy 
+                  ? lead.behavioralAnalysis.masterStrategy
+                  : (lead.score > 70 
+                    ? "Este lead demonstrou alto interesse e está em estágio inicial. A probabilidade de conversão é 85% maior se contatado nos próximos 15 minutos."
+                    : "Lead qualificado com bom potencial de fechamento. Mantenha o fluxo de nutrição ativo para garantir a progressão no funil.")
+                }
               </p>
             </div>
 
@@ -89,6 +93,7 @@ export const PriorityFeed: React.FC<PriorityFeedProps> = ({
           </motion.div>
         ))}
       </div>
-    </motion.div>
+    </div>
+  </motion.div>
   );
 };

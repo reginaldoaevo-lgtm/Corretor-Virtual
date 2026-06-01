@@ -6,7 +6,6 @@
   "scripts": {
     "dev": "node run-dev.js",
     "build": "next build",
-    "start": "node run-start.js",
     "lint": "tsc --noEmit"
   },
   "dependencies": {

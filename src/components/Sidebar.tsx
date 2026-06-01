@@ -73,6 +73,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   isSupabaseConnected,
   setIsBackupModalOpen
 }) => {
+  const [linkCopied, setLinkCopied] = React.useState(false);
+
   return (
     <aside className="w-24 lg:w-80 bg-navy-light/60 backdrop-blur-3xl border-r border-white/5 flex flex-col h-screen shrink-0 z-30 relative overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-96 bg-gold/[0.03] blur-[120px] pointer-events-none" />
@@ -234,6 +236,32 @@ export const Sidebar: React.FC<SidebarProps> = ({
             Gestão de Equipe
           </button>
         )}
+
+        <button 
+          onClick={() => {
+            window.open(window.location.origin, '_blank');
+          }}
+          className="w-full h-8 flex items-center justify-center gap-2 rounded-none bg-indigo-500/[0.03] text-indigo-400 hover:bg-indigo-500/[0.08] transition-all duration-500 text-[8px] font-black uppercase tracking-[0.2em] border-t border-white/5 group"
+        >
+          <Globe size={14} className="group-hover:scale-110 transition-transform" />
+          Abrir em Nova Aba
+        </button>
+
+        <button 
+          onClick={() => {
+            const url = window.location.origin;
+            navigator.clipboard.writeText(url);
+            setLinkCopied(true);
+            setTimeout(() => setLinkCopied(false), 2000);
+            console.log("Link de acesso copiado:", url);
+          }}
+          className={`w-full h-8 flex items-center justify-center gap-2 rounded-none transition-all duration-500 text-[8px] font-black uppercase tracking-[0.2em] border-t border-white/5 group ${
+            linkCopied ? 'bg-blue-500 text-white' : 'bg-blue-500/[0.03] text-blue-400 hover:bg-blue-500/[0.08]'
+          }`}
+        >
+          {linkCopied ? <ShieldCheck size={14} /> : <Globe size={14} className="group-hover:scale-110 transition-transform" />}
+          {linkCopied ? 'Link Copiado!' : 'Copiar Link de Acesso'}
+        </button>
 
         <button 
           onClick={() => openWhatsApp('62981133288')}

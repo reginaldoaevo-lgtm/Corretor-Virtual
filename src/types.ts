@@ -28,6 +28,7 @@ export interface Contact {
 export interface AIResponse {
   idealResponse: string;
   masterStrategy: string;
+  suggestedTemperature: Temperature;
   timestamp: string;
 }
 

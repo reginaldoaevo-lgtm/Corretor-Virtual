@@ -20,65 +20,40 @@ import { motion } from 'motion/react';
 import { useAuth } from './hooks/useAuth';
 import { useLeads } from './hooks/useLeads';
 import { useAI } from './hooks/useAI';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { Sidebar } from './components/Sidebar';
 import { Layout } from './components/Layout';
 import { Kanban } from './components/CRM/Kanban';
-
-// Importações dos subcomponentes de renderização de telas e modais
 import { ContactsList } from './components/CRM/ContactsList';
-import { PriorityFeed } from './components/CRM/PriorityFeed';
-import { TeamManagement } from './components/CRM/TeamManagement';
-import { AIBrain } from './components/CRM/AIBrain';
-import { ContactDetailModal } from './components/Modals/ContactDetailModal';
+import { PriorityFeed } from './components/Dashboard/PriorityFeed';
+import { TeamManagement } from './components/Team/TeamManagement';
+import { AIBrain } from './components/AI/AIBrain';
 import { LeadModal } from './components/Modals/LeadModal';
 import { BackupModal } from './components/Modals/BackupModal';
 import { SwitchUserModal } from './components/Modals/SwitchUserModal';
+import { ContactDetailModal } from './components/Modals/ContactDetailModal';
+import { Temperature, User } from './types';
+import { testSupabaseConnection } from './lib/supabase';
+import { testGeminiConnection } from './services/geminiService';
 
-// Definições de Tipagem Necessárias para o escopo local
-export type Temperature = 'Neutro' | 'Frio' | 'Morno' | 'Quente';
-
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: 'admin' | 'premium' | 'user';
-  password?: string;
-}
-
-export interface BehavioralAnalysis {
-  idealResponse: string;
-  masterStrategy: string;
-  suggestedTemperature: Temperature;
-  timestamp: string;
-}
-
-export interface Contact {
-  id: string;
-  name: string;
-  phone: string;
-  property: string;
-  propertyImage?: string;
-  budget: string;
-  status: string;
-  temperature: Temperature;
-  conversationHistory?: string;
-  behavioralAnalysis?: BehavioralAnalysis | null;
-  behavioralHistory?: BehavioralAnalysis[];
-}
-
-// Funções mockadas de teste de infraestrutura (substitua pelas suas funções importadas reais se houver)
-const testSupabaseConnection = async () => console.log("Testando conexão Supabase...");
-const testGeminiConnection = async () => true;
-
-const validateKey = (key: string | undefined): boolean => {
+const validateKey = (key: string) => {
   if (!key) return false;
-  return key.trim().startsWith('AIza') && key.trim().length > 10;
+  const trimmed = key.trim();
+  return trimmed.length > 10 && 
+         trimmed !== 'YOUR_API_KEY' && 
+         !trimmed.includes('MY_GEMINI') &&
+         !trimmed.includes('PLACEHOLDER');
 };
 
-const getApiKey = (): string => {
-  const localKey = safeLocalStorage.getItem('RADAR_CRM_GEMINI_KEY');
+const getApiKey = () => {
+  if (typeof window === 'undefined') return '';
+  
+  const localKey = safeLocalStorage.getItem('RADAR_CRM_GEMINI_KEY') || '';
+
+  // 1. Check manual key first (user intent is strongest here)
   if (localKey && validateKey(localKey)) return localKey.trim();
 
+  // 2. Check environment variables
   const envKey = [
     process.env.NEXT_PUBLIC_GEMINI_API_KEY,
     process.env.GEMINI_API_KEY,
@@ -146,15 +121,14 @@ export default function App() {
     console.log("🗑️ Chave manual removida.");
     window.location.reload();
   };
-
   const { 
     teamMembers, 
+    setTeamMembers, 
     currentUser, 
     setCurrentUser, 
     addTeamMember, 
     deleteTeamMember 
   } = useAuth();
-
   const { 
     contacts, 
     selectedContact, 
@@ -174,6 +148,17 @@ export default function App() {
 
   const [isBackupModalOpen, setIsBackupModalOpen] = useState(false);
 
+  const setSelectedContact = (contact: any) => {
+    setLeadsSelectedContact(contact);
+    if (contact) {
+      setConversation(contact.conversationHistory || '');
+      setAiResponse(contact.behavioralAnalysis || null);
+    } else {
+      setConversation('');
+      setAiResponse(null);
+    }
+  };
+  
   const {
     conversation,
     setConversation,
@@ -193,19 +178,6 @@ export default function App() {
     error,
     setError
   } = useAI();
-
-  const setSelectedContact = (contact: Contact | null) => {
-    setLeadsSelectedContact(contact);
-    if (contact) {
-      setConversation(contact.conversationHistory || '');
-      setAiResponse(contact.behavioralAnalysis || null);
-    } else {
-      setConversation('');
-      setAiResponse(null);
-      setAnalysisImage('');
-      setAnalysisAudio('');
-    }
-  };
 
   const [activeId, setActiveId] = useState<string | null>(null);
   const [showSessionMenu, setShowSessionMenu] = useState(false);
@@ -399,8 +371,10 @@ export default function App() {
       setSelectedUserToSwitch(null);
       setSwitchPassword('');
       setActiveTab('dashboard');
+      // Removed alert for better iframe compatibility
       console.log(`Bem-vindo de volta, ${selectedUserToSwitch.name}!`);
     } else {
+      // Removed alert for better iframe compatibility
       console.warn("Senha incorreta!");
     }
   };
@@ -546,6 +520,7 @@ export default function App() {
             handleGlobalAnalysis={async () => {
               const analyses = await handleGlobalAnalysis(contacts);
               if (analyses && analyses.length > 0) {
+                // Update temperatures for all contacts analyzed
                 analyses.forEach(analysis => {
                   const contact = contacts.find(c => c.id === analysis.contactId);
                   if (contact) {
@@ -611,12 +586,7 @@ export default function App() {
             handleGenerate={async () => {
               if (!selectedContact) return;
               const currentContactId = selectedContact.id;
-              
-              const response = await handleGenerate(
-                conversation, 
-                analysisImage, 
-                analysisAudio
-              );
+              const response = await handleGenerate(selectedContact.name, selectedContact.property);
               
               if (response && selectedContact && selectedContact.id === currentContactId) {
                 const updatedHistory = [
@@ -626,7 +596,6 @@ export default function App() {
                 
                 handleUpdateContact({
                   ...selectedContact,
-                  conversationHistory: conversation,
                   behavioralAnalysis: response,
                   behavioralHistory: updatedHistory,
                   temperature: response.suggestedTemperature || selectedContact.temperature
@@ -679,5 +648,5 @@ export default function App() {
           handleConfirmSwitch={handleConfirmSwitch}
         />
       </div>
-  );
+    );
 }

@@ -11,20 +11,23 @@ export const useAI = () => {
   const [globalAnalyses, setGlobalAnalyses] = useState<GlobalAnalysisItem[]>([]);
   const [isGlobalLoading, setIsGlobalLoading] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const [analysisImage, setAnalysisImage] = useState<string | null>(null);
+  const [analysisAudio, setAnalysisAudio] = useState<string | null>(null);
 
   const handleGenerate = async (contactName: string, property: string) => {
-    if (!conversation.trim() && !analysisImage) return;
+    if (!conversation.trim() && !analysisImage && !analysisAudio) return;
     
     setIsLoading(true);
+    setError(null);
     try {
-      const response = await generateRadarResponse(conversation, contactName, property, analysisImage || undefined);
+      const response = await generateRadarResponse(conversation, contactName, property, analysisImage || undefined, analysisAudio || undefined);
       setAiResponse(response);
       return response;
     } catch (error: any) {
       console.error("Erro no handleGenerate:", error);
-      // Removed alert for better iframe compatibility
+      setError(error.message || "Erro ao processar análise da IA.");
     } finally {
       setIsLoading(false);
     }
@@ -32,12 +35,14 @@ export const useAI = () => {
 
   const handleGlobalAnalysis = async (contacts: any[]) => {
     setIsGlobalLoading(true);
+    setError(null);
     try {
       const analyses = await analyzeAllContacts(contacts);
       setGlobalAnalyses(analyses);
+      return analyses;
     } catch (error: any) {
       console.error("Erro no handleGlobalAnalysis:", error);
-      // Removed alert for better iframe compatibility
+      setError(error.message || "Erro ao processar análise global.");
     } finally {
       setIsGlobalLoading(false);
     }
@@ -60,10 +65,14 @@ export const useAI = () => {
     globalAnalyses,
     isGlobalLoading,
     copied,
+    error,
+    setError,
     handleGenerate,
     handleGlobalAnalysis,
     copyToClipboard,
     analysisImage,
-    setAnalysisImage
+    setAnalysisImage,
+    analysisAudio,
+    setAnalysisAudio
   };
 };

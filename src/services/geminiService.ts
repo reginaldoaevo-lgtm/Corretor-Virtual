@@ -7,6 +7,7 @@ export interface GlobalAnalysisItem {
   observation: string;
   behavioralSummary: string;
   nextAction: string;
+  suggestedTemperature: 'Frio' | 'Morno' | 'Quente';
 }
 
 const validateKey = (key: string) => {
@@ -48,7 +49,38 @@ function getAIClient() {
   return { ai: new GoogleGenAI({ apiKey }), apiKey };
 }
 
-export async function generateRadarResponse(conversation: string, contactName: string, property: string, imageBase64?: string) {
+async function callWithRetry<T>(fn: () => Promise<T>, maxRetries = 3, delay = 1500): Promise<T> {
+  let lastError: any;
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      return await fn();
+    } catch (error: any) {
+      lastError = error;
+      const errorMessage = error.message || String(error);
+      
+      // Check for retryable errors: 503 (High Demand), 429 (Quota), or generic network errors
+      const isRetryable = errorMessage.includes("503") || 
+                          errorMessage.includes("Service Unavailable") ||
+                          errorMessage.includes("high demand") ||
+                          errorMessage.includes("temporary") ||
+                          errorMessage.includes("429") ||
+                          errorMessage.includes("Too Many Requests") ||
+                          errorMessage.includes("fetch") ||
+                          errorMessage.includes("NetworkError");
+      
+      if (isRetryable && i < maxRetries - 1) {
+        const waitTime = delay * Math.pow(2, i); // Exponential backoff: 1.5s, 3s, 6s
+        console.warn(`⚠️ Gemini API ocupada ou indisponível (Tentativa ${i + 1}/${maxRetries}). Aguardando ${waitTime}ms...`);
+        await new Promise(resolve => setTimeout(resolve, waitTime));
+        continue;
+      }
+      throw error;
+    }
+  }
+  throw lastError;
+}
+
+export async function generateRadarResponse(conversation: string, contactName: string, property: string, imageBase64?: string, audioBase64?: string) {
   const { ai } = getAIClient();
 
   console.log(`🤖 Iniciando análise comportamental para: ${contactName}`);
@@ -64,11 +96,12 @@ export async function generateRadarResponse(conversation: string, contactName: s
         - Produto/Imóvel: ${property}
         - Histórico de Conversa: ${conversation || "Nenhum texto fornecido"}
         
-        Se um print (imagem) foi fornecido, analise visualmente as mensagens, o tom de voz e as intenções implícitas do cliente.
+        Se um print (imagem) ou áudio foi fornecido, analise visualmente/auditivamente as mensagens, o tom de voz e as intenções implícitas do cliente.
         
         Forneça:
         1. idealResponse: Uma resposta persuasiva, empática e profissional adaptada ao comportamento detectado.
-        2. masterStrategy: Uma análise psicológica do comportamento do cliente e o porquê dessa abordagem.`
+        2. masterStrategy: Uma análise psicológica do comportamento do cliente e o porquê dessa abordagem.
+        3. suggestedTemperature: Classifique o lead como 'Frio', 'Morno' ou 'Quente' baseado no interesse demonstrado.`
       }
     ];
 
@@ -82,22 +115,33 @@ export async function generateRadarResponse(conversation: string, contactName: s
       });
     }
 
-    const response = await ai.models.generateContent({
+    if (audioBase64) {
+      const base64Data = audioBase64.split(',')[1] || audioBase64;
+      parts.push({
+        inlineData: {
+          mimeType: "audio/mp3",
+          data: base64Data
+        }
+      });
+    }
+
+    const response = await callWithRetry(() => ai.models.generateContent({
       model: "gemini-3-flash-preview",
       contents: { parts },
       config: {
-        systemInstruction: "Você é um expert em psicologia de vendas e comportamento do consumidor. Analise prints de conversas e textos colados para criar respostas que quebrem objeções e gerem desejo imediato.",
+        systemInstruction: "Você é um expert em psicologia de vendas e comportamento do consumidor. Analise prints de conversas, áudios (transcreva-os internamente) e textos colados para criar respostas que quebrem objeções e gerem desejo imediato. Classifique a temperatura do lead: 'Quente' (alto interesse, pronto para agir), 'Morno' (interessado mas com dúvidas/objeções) ou 'Frio' (baixo interesse ou desengajado).",
         responseMimeType: "application/json",
         responseSchema: {
           type: Type.OBJECT,
           properties: {
             idealResponse: { type: Type.STRING, description: "A resposta sugerida para enviar ao cliente" },
-            masterStrategy: { type: Type.STRING, description: "Análise do comportamento e estratégia recomendada" }
+            masterStrategy: { type: Type.STRING, description: "Análise do comportamento e estratégia recomendada" },
+            suggestedTemperature: { type: Type.STRING, enum: ["Frio", "Morno", "Quente"], description: "Classificação da temperatura do lead" }
           },
-          required: ["idealResponse", "masterStrategy"]
+          required: ["idealResponse", "masterStrategy", "suggestedTemperature"]
         }
       }
-    });
+    }));
 
     console.log("✅ Análise comportamental concluída.");
     try {
@@ -116,8 +160,11 @@ export async function generateRadarResponse(conversation: string, contactName: s
     if (e.message?.includes("API key not valid")) {
       throw new Error("A chave de API inserida é inválida. Por favor, verifique se copiou a chave completa do AI Studio e se não há espaços extras.");
     }
-    if (e.message?.includes("Quota exceeded")) {
+    if (e.message?.includes("Quota exceeded") || e.message?.includes("429")) {
       throw new Error("Limite de uso da API Gemini excedido. Tente novamente em alguns minutos ou verifique sua cota no Google Cloud.");
+    }
+    if (e.message?.includes("503") || e.message?.includes("high demand") || e.message?.includes("UNAVAILABLE")) {
+      throw new Error("O modelo Gemini está com alta demanda no momento. Por favor, aguarde alguns segundos e tente novamente.");
     }
     throw e;
   }
@@ -130,7 +177,7 @@ export async function analyzeAllContacts(contacts: any[]): Promise<GlobalAnalysi
   console.log(`🤖 Iniciando análise global de ${contacts.length} contatos.`);
 
   try {
-    const response = await ai.models.generateContent({
+    const response = await callWithRetry(() => ai.models.generateContent({
       model: "gemini-3-flash-preview",
       contents: `Você é o Especialista em Comportamento do Consumidor da Radar CRM. 
       Analise o status atual destes leads e forneça uma análise estratégica individual focada em gatilhos mentais e comportamento.
@@ -144,7 +191,7 @@ export async function analyzeAllContacts(contacts: any[]): Promise<GlobalAnalysi
         behavioralHistory: c.behavioralHistory || (c.behavioralAnalysis ? [c.behavioralAnalysis] : [])
       })))}`,
       config: {
-        systemInstruction: "Você é um estrategista de vendas focado em psicologia aplicada. Analise os leads e identifique o perfil comportamental de cada um para sugerir a melhor abordagem.",
+        systemInstruction: "Você é um estrategista de vendas focado em psicologia aplicada. Analise os leads e identifique o perfil comportamental de cada um para sugerir a melhor abordagem. Classifique a temperatura do lead: 'Quente' (alto interesse), 'Morno' (médio interesse) ou 'Frio' (baixo interesse).",
         responseMimeType: "application/json",
         responseSchema: {
           type: Type.ARRAY,
@@ -155,13 +202,14 @@ export async function analyzeAllContacts(contacts: any[]): Promise<GlobalAnalysi
               contactName: { type: Type.STRING },
               observation: { type: Type.STRING, description: "Observação crítica sobre o estado atual do lead" },
               behavioralSummary: { type: Type.STRING, description: "Resumo da análise comportamental individual (se houver)" },
-              nextAction: { type: Type.STRING, description: "Ação imediata recomendada para avançar no funil" }
+              nextAction: { type: Type.STRING, description: "Ação imediata recomendada para avançar no funil" },
+              suggestedTemperature: { type: Type.STRING, enum: ["Frio", "Morno", "Quente"], description: "Classificação da temperatura do lead" }
             },
-            required: ["contactId", "contactName", "observation", "behavioralSummary", "nextAction"]
+            required: ["contactId", "contactName", "observation", "behavioralSummary", "nextAction", "suggestedTemperature"]
           }
         }
       }
-    });
+    }));
 
     console.log("✅ Análise global recebida com sucesso.");
     let parsed = [];
@@ -181,8 +229,11 @@ export async function analyzeAllContacts(contacts: any[]): Promise<GlobalAnalysi
     if (e.message?.includes("API key not valid")) {
       throw new Error("A chave de API inserida é inválida. Por favor, verifique se copiou a chave completa do AI Studio e se não há espaços extras.");
     }
-    if (e.message?.includes("Quota exceeded")) {
+    if (e.message?.includes("Quota exceeded") || e.message?.includes("429")) {
       throw new Error("Limite de uso da API Gemini excedido. Tente novamente em alguns minutos ou verifique sua cota no Google Cloud.");
+    }
+    if (e.message?.includes("503") || e.message?.includes("high demand") || e.message?.includes("UNAVAILABLE")) {
+      throw new Error("O modelo Gemini está com alta demanda no momento. Por favor, aguarde alguns segundos e tente novamente.");
     }
     throw e;
   }
@@ -192,10 +243,10 @@ export async function testGeminiConnection() {
   try {
     const { ai } = getAIClient();
     console.log("🧪 Testando conexão com Gemini...");
-    const response = await ai.models.generateContent({
+    const response = await callWithRetry(() => ai.models.generateContent({
       model: "gemini-3-flash-preview",
       contents: "ping",
-    });
+    }));
     const success = !!response.text;
     if (success) {
       console.log("✅ Conexão Gemini OK!");

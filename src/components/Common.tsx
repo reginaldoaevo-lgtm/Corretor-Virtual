@@ -86,3 +86,9 @@ export const openWhatsApp = (phone: string) => {
   const finalPhone = cleanPhone.length <= 11 ? `55${cleanPhone}` : cleanPhone;
   window.open(`https://wa.me/${finalPhone}`, '_blank');
 };
+
+export const makeCall = (phone: string) => {
+  const cleanPhone = phone.replace(/\D/g, '');
+  if (!cleanPhone) return;
+  window.location.href = `tel:${cleanPhone}`;
+};
